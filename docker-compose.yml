@@ -16,7 +16,7 @@ services:
       timeout: 5s
       retries: 5
   ollama:
-    image: ollama/ollama:latest
+    image: ollama/ollama:0.12.4-rc4
     container_name: ollama
     restart: always
     ports:
