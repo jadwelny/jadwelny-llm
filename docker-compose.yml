@@ -15,8 +15,20 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
-  # Aegra Server
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: always
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    # Aegra Server
   aegra:
     build:
       context: .
@@ -28,6 +40,7 @@ services:
       - AUTH_TYPE=noop
       - DEBUG=true
       - PORT=${PORT:-8000}
+      - OLLAMA_API_BASE=http://ollama:11434
     depends_on:
       postgres:
         condition: service_healthy
