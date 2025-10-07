@@ -11,24 +11,24 @@ from travel_orchestrator.tools import TOOLS
 from travel_orchestrator.utils import load_chat_model
 
 async def call_model(
-    state: State,
+    state: dict,
     runtime: Runtime[Context],
 ) -> Dict[str, List[AIMessage]]:
     """Call the LLM powering the travel orchestrator."""
     model = load_chat_model(runtime.context.model).bind_tools(TOOLS)
-    # Format the system prompt
+    
     system_message = runtime.context.system_prompt.format(
         system_time=datetime.now(tz=UTC).isoformat()
     )
-    # Get the model's response
+
     response = cast(
         AIMessage,
         await model.ainvoke(
-            [{"role": "system", "content": system_message}, *state.messages]
+            [{"role": "system", "content": system_message}, *state["messages"]]
         ),
     )
-    # Handle the case when it's the last step and the model still wants to use a tool
-    if state.is_last_step and response.tool_calls:
+
+    if state.get("is_last_step") and response.tool_calls:
         return {
             "messages": [
                 AIMessage(
@@ -37,7 +37,9 @@ async def call_model(
                 )
             ]
         }
+
     return {"messages": [response]}
+
 
 def route_model_output(state: State) -> Literal["__end__", "tools"]:
     """Determine the next node based on the model's output."""
