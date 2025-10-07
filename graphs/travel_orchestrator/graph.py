@@ -20,6 +20,10 @@ async def call_model(
     system_message = runtime.context.system_prompt.format(
         system_time=datetime.now(tz=UTC).isoformat()
     )
+    print("DEBUG: state =", state)
+    print("DEBUG: type(state) =", type(state))
+    print("DEBUG: state keys =", list(state.keys()) if isinstance(state, dict) else "not a dict")
+
     # Get the model's response
     response = cast(
         AIMessage,
