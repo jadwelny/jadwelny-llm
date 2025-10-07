@@ -10,11 +10,11 @@ from travel_orchestrator.state import InputState, State
 from travel_orchestrator.tools import TOOLS
 from travel_orchestrator.utils import load_chat_model
 
-async def call_model(state: State, runtime: Runtime[Context]) -> Dict[str, List[AIMessage]]:
-    # Convert dict to State object if needed
+async def call_model(state, runtime: Runtime[Context]) -> Dict[str, List[AIMessage]]:
+    # Convert dict to State if needed
     if isinstance(state, dict):
         state = State(**state)
-
+    
     model = load_chat_model(runtime.context.model).bind_tools(TOOLS)
     system_message = runtime.context.system_prompt.format(
         system_time=datetime.now(tz=UTC).isoformat()
@@ -28,16 +28,13 @@ async def call_model(state: State, runtime: Runtime[Context]) -> Dict[str, List[
     )
 
     if state.is_last_step and response.tool_calls:
-        return {
-            "messages": [
-                AIMessage(
-                    id=response.id,
-                    content="I need more steps to complete your travel planning request. Please let me continue or provide more specific details.",
-                )
-            ]
-        }
+        return {"messages": [AIMessage(
+            id=response.id,
+            content="I need more steps to complete your travel planning request. Please let me continue or provide more specific details.",
+        )]}
 
     return {"messages": [response]}
+
 
 
 def route_model_output(state: State) -> Literal["__end__", "tools"]:
