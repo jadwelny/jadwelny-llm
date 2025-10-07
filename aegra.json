@@ -3,6 +3,8 @@
     "travel_orchestrator": "./graphs/travel_orchestrator/graph.py:graph",
     "flight_agent": "./graphs/flight_agent/graph.py:graph",
     "hotel_agent": "./graphs/hotel_agent/graph.py:graph",
-    "hotel_order_agent": "./graphs/hotel_order_agent/graph.py:graph"
+    "hotel_order_agent": "./graphs/hotel_order_agent/graph.py:graph",
+    "activity_agent": "./graphs/activity_agent/graph.py:graph",
+    "esim_agent": "./graphs/esim_agent/graph.py:graph"
   }
 }
